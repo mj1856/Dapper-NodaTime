@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
 using NodaTime;
-
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#endif
 
 namespace Dapper.NodaTime
 {
@@ -21,9 +16,13 @@ namespace Dapper.NodaTime
         {
             parameter.Value = value.ToDateTimeOffset();
 
-            if (parameter is SqlParameter sqlParameter)
+            if (parameter is Microsoft.Data.SqlClient.SqlParameter sqlParameter)
             {
                 sqlParameter.SqlDbType = SqlDbType.DateTimeOffset;
+            }
+            else if (parameter is System.Data.SqlClient.SqlParameter sqlParameter2)
+            {
+                sqlParameter2.SqlDbType = SqlDbType.DateTimeOffset;
             }
         }
 

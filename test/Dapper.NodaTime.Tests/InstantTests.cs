@@ -1,6 +1,5 @@
-﻿using System.Configuration;
-using System.Data.SqlClient;
-using System.Linq;
+﻿using System.Linq;
+using Microsoft.Extensions.Configuration;
 using NodaTime;
 using Xunit;
 
@@ -9,7 +8,7 @@ namespace Dapper.NodaTime.Tests
     [Collection("DBTests")]
     public class InstantTests
     {
-        private readonly string _connectionString;
+        private IConfiguration _configuration;
 
         private class TestObject
         {
@@ -18,14 +17,17 @@ namespace Dapper.NodaTime.Tests
 
         public InstantTests()
         {
-            _connectionString = ConfigurationManager.ConnectionStrings["TestDB"].ConnectionString;
+            _configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
             SqlMapper.AddTypeHandler(InstantHandler.Default);
         }
 
-        [Fact]
-        public void Can_Write_And_Read_Instant_Stored_As_DateTimeOffset()
+        [Theory]
+        [ClassData(typeof(DbVendorLibraryTestData))]
+        public void Can_Write_And_Read_Instant_Stored_As_DateTimeOffset(DbVendorLibrary library)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new DbVendorLibraryConnectionProvider().Provide(library, _configuration))
             {
                 var o = new TestObject { Value = Instant.FromUtc(1234, 12, 31, 1, 2, 3).PlusTicks(1234567) };
 
@@ -36,10 +38,11 @@ namespace Dapper.NodaTime.Tests
             }
         }
 
-        [Fact]
-        public void Can_Write_And_Read_Instant_Stored_As_DateTime2()
+        [Theory]
+        [ClassData(typeof(DbVendorLibraryTestData))]
+        public void Can_Write_And_Read_Instant_Stored_As_DateTime2(DbVendorLibrary library)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new DbVendorLibraryConnectionProvider().Provide(library, _configuration))
             {
                 var o = new TestObject { Value = Instant.FromUtc(1234, 12, 31, 1, 2, 3).PlusTicks(1234567) };
 
@@ -50,10 +53,11 @@ namespace Dapper.NodaTime.Tests
             }
         }
 
-        [Fact]
-        public void Can_Write_And_Read_Instant_Stored_As_DateTime()
+        [Theory]
+        [ClassData(typeof(DbVendorLibraryTestData))]
+        public void Can_Write_And_Read_Instant_Stored_As_DateTime(DbVendorLibrary library)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new DbVendorLibraryConnectionProvider().Provide(library, _configuration))
             {
                 var o = new TestObject { Value = Instant.FromUtc(1753, 12, 31, 1, 2, 3).PlusTicks(3330000) };
 
@@ -64,10 +68,11 @@ namespace Dapper.NodaTime.Tests
             }
         }
 
-        [Fact]
-        public void Can_Write_And_Read_Instant_With_Null_Value()
+        [Theory]
+        [ClassData(typeof(DbVendorLibraryTestData))]
+        public void Can_Write_And_Read_Instant_With_Null_Value(DbVendorLibrary library)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new DbVendorLibraryConnectionProvider().Provide(library, _configuration))
             {
                 var o = new TestObject();
 

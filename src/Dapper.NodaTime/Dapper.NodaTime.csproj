@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Provides Noda Time support for Dapper</Description>
     <Authors>Matt Johnson</Authors>
-    <TargetFrameworks>netstandard2.0;netstandard1.3;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461;net5.0</TargetFrameworks>
     <PackageId>Dapper-NodaTime</PackageId>
     <PackageTags>dapper;nodatime;noda time</PackageTags>
     <PackageProjectUrl>https://github.com/mj1856/Dapper-NodaTime</PackageProjectUrl>
@@ -14,12 +14,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NodaTime" Version="2.0.0" />
-    <PackageReference Include="Dapper" Version="1.50.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.3" />
+    <PackageReference Include="NodaTime" Version="3.0.5" />
+    <PackageReference Include="Dapper" Version="2.0.90" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
-  </ItemGroup>
-
 </Project>

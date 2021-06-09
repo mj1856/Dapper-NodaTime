@@ -1,6 +1,5 @@
-﻿using System.Configuration;
-using System.Data.SqlClient;
-using System.Linq;
+﻿using System.Linq;
+using Microsoft.Extensions.Configuration;
 using NodaTime;
 using Xunit;
 
@@ -9,7 +8,7 @@ namespace Dapper.NodaTime.Tests
     [Collection("DBTests")]
     public class LocalDateTests
     {
-        private readonly string _connectionString;
+        private IConfiguration _configuration;
 
         private class TestObject
         {
@@ -18,14 +17,17 @@ namespace Dapper.NodaTime.Tests
 
         public LocalDateTests()
         {
-            _connectionString = ConfigurationManager.ConnectionStrings["TestDB"].ConnectionString;
+            _configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
             SqlMapper.AddTypeHandler(LocalDateHandler.Default);
         }
 
-        [Fact]
-        public void Can_Write_And_Read_LocalDate_Stored_As_Date()
+        [Theory]
+        [ClassData(typeof(DbVendorLibraryTestData))]
+        public void Can_Write_And_Read_LocalDate_Stored_As_Date(DbVendorLibrary library)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new DbVendorLibraryConnectionProvider().Provide(library, _configuration))
             {
                 var o = new TestObject { Value = new LocalDate(1234, 12, 31) };
 
@@ -36,10 +38,11 @@ namespace Dapper.NodaTime.Tests
             }
         }
 
-        [Fact]
-        public void Can_Write_And_Read_LocalDate_Stored_As_DateTime()
+        [Theory]
+        [ClassData(typeof(DbVendorLibraryTestData))]
+        public void Can_Write_And_Read_LocalDate_Stored_As_DateTime(DbVendorLibrary library)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new DbVendorLibraryConnectionProvider().Provide(library, _configuration))
             {
                 var o = new TestObject { Value = new LocalDate(1753, 12, 31) };
 
@@ -50,10 +53,11 @@ namespace Dapper.NodaTime.Tests
             }
         }
 
-        [Fact]
-        public void Can_Write_And_Read_LocalDate_Stored_As_DateTime2()
+        [Theory]
+        [ClassData(typeof(DbVendorLibraryTestData))]
+        public void Can_Write_And_Read_LocalDate_Stored_As_DateTime2(DbVendorLibrary library)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new DbVendorLibraryConnectionProvider().Provide(library, _configuration))
             {
                 var o = new TestObject { Value = new LocalDate(1234, 12, 31) };
 
@@ -64,10 +68,11 @@ namespace Dapper.NodaTime.Tests
             }
         }
 
-        [Fact]
-        public void Can_Write_And_Read_LocalDate_With_Null_Value()
+        [Theory]
+        [ClassData(typeof(DbVendorLibraryTestData))]
+        public void Can_Write_And_Read_LocalDate_With_Null_Value(DbVendorLibrary library)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new DbVendorLibraryConnectionProvider().Provide(library, _configuration))
             {
                 var o = new TestObject();
 
